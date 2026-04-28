@@ -1,0 +1,14 @@
+{
+  "name": "devchat",
+  "version": "1.0.0",
+  "description": "Chat app for developers",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "dotenv": "^16.0.3",
+    "cors": "^2.8.5"
+  }
+}

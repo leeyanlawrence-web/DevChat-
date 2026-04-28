@@ -1,0 +1,218 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  display: flex;
+  height: 100vh;
+  background: #0d1117;
+  color: #fff;
+  font-family: 'Courier New', monospace;
+  overflow: hidden;
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: 320px;
+  background: #161b22;
+  border-right: 1px solid #30363d;
+  display: flex;
+  flex-direction: column;
+  animation: slideIn 0.4s ease;
+}
+
+.sidebar-header {
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #30363d;
+}
+
+.sidebar-header h2 { color: #58a6ff; font-size: 1.2rem; }
+
+.sidebar-header button {
+  background: #58a6ff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  color: #000;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.sidebar-header button:hover { background: #1f6feb; color: #fff; }
+
+/* TABS */
+.tabs {
+  display: flex;
+  border-bottom: 1px solid #30363d;
+}
+
+.tab {
+  flex: 1;
+  padding: 12px;
+  background: none;
+  border: none;
+  color: #8b949e;
+  cursor: pointer;
+  transition: 0.3s;
+  font-family: 'Courier New', monospace;
+}
+
+.tab.active {
+  color: #58a6ff;
+  border-bottom: 2px solid #58a6ff;
+}
+
+.tab-content { flex: 1; overflow-y: auto; }
+.hidden { display: none !important; }
+
+/* SEARCH */
+.search-box { padding: 10px; }
+.search-box input {
+  width: 100%;
+  padding: 10px;
+  background: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  color: #fff;
+  font-family: 'Courier New', monospace;
+}
+
+/* CHAT ITEMS */
+.chat-item {
+  padding: 15px 20px;
+  cursor: pointer;
+  border-bottom: 1px solid #21262d;
+  transition: background 0.2s;
+  animation: fadeIn 0.3s ease;
+}
+
+.chat-item:hover { background: #21262d; }
+.chat-item h4 { color: #fff; margin-bottom: 4px; }
+.chat-item p { color: #8b949e; font-size: 0.85rem; }
+
+/* CHAT WINDOW */
+.chat-window {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.empty-state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #8b949e;
+  animation: fadeIn 0.5s ease;
+}
+
+.empty-state h2 { color: #58a6ff; margin-bottom: 10px; }
+
+/* ACTIVE CHAT */
+#activeChat {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.chat-header {
+  padding: 20px;
+  background: #161b22;
+  border-bottom: 1px solid #30363d;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chat-header h3 { color: #58a6ff; }
+#chatStatus { color: #3fb950; font-size: 0.85rem; }
+
+/* MESSAGES */
+.messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.message {
+  max-width: 70%;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  animation: popIn 0.2s ease;
+  word-wrap: break-word;
+}
+
+.message.sent {
+  background: #1f6feb;
+  align-self: flex-end;
+  border-bottom-right-radius: 4px;
+}
+
+.message.received {
+  background: #21262d;
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
+}
+
+.message .time {
+  font-size: 0.7rem;
+  color: #8b949e;
+  margin-top: 4px;
+  text-align: right;
+}
+
+/* MESSAGE INPUT */
+.message-input {
+  padding: 15px;
+  background: #161b22;
+  border-top: 1px solid #30363d;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.message-input input {
+  flex: 1;
+  padding: 10px;
+  background: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  color: #fff;
+  font-family: 'Courier New', monospace;
+}
+
+.message-input button {
+  padding: 10px 16px;
+  background: #58a6ff;
+  border: none;
+  border-radius: 8px;
+  color: #000;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.message-input button:hover { background: #1f6feb; color: #fff; }
+
+/* ANIMATIONS */
+@keyframes slideIn {
+  from { transform: translateX(-20px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes popIn {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}

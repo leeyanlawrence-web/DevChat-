@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DevChat</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/chat.css">
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <h2>&lt;DevChat/&gt;</h2>
+      <button id="newGroupBtn">+ Group</button>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab active" onclick="showTab('chats')">Chats</button>
+      <button class="tab" onclick="showTab('groups')">Groups</button>
+      <button class="tab" onclick="showTab('status')">Status</button>
+    </div>
+
+    <!-- Chat List -->
+    <div id="chats" class="tab-content">
+      <div class="search-box">
+        <input type="text" placeholder="Search developers..." id="searchInput"/>
+      </div>
+      <div id="chatList"></div>
+    </div>
+
+    <!-- Groups List -->
+    <div id="groups" class="tab-content hidden">
+      <div id="groupList"></div>
+    </div>
+
+    <!-- Status List -->
+    <div id="status" class="tab-content hidden">
+      <button onclick="createStatus()">+ Post Status</button>
+      <div id="statusList"></div>
+    </div>
+  </div>
+
+  <!-- CHAT WINDOW -->
+  <div class="chat-window">
+
+    <!-- Empty state -->
+    <div class="empty-state" id="emptyState">
+      <h2>&lt;Select a chat/&gt;</h2>
+      <p>Pick a developer to start chatting</p>
+    </div>
+
+    <!-- Active chat -->
+    <div id="activeChat" class="hidden">
+      <div class="chat-header">
+        <h3 id="chatName"></h3>
+        <span id="chatStatus"></span>
+      </div>
+
+      <div class="messages" id="messages"></div>
+
+      <div class="message-input">
+        <button onclick="attachFile()">📎</button>
+        <input type="text" id="msgInput" placeholder="Type a message..." />
+        <button onclick="sendMessage()">Send</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script type="module" src="js/firebase.js"></script>
+  <script type="module" src="js/chat.js"></script>
+  <script type="module" src="js/group.js"></script>
+  <script type="module" src="js/status.js"></script>
+  <script type="module" src="js/media.js"></script>
+</body>
+</html>
