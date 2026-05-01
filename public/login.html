@@ -4,34 +4,61 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DevChat - Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/login.css">
 </head>
 <body>
-  <div class="login-container">
-
-    <!-- Logo -->
-    <div class="logo">
-      <h1>&lt;DevChat/&gt;</h1>
-      <p>Chat built for developers</p>
-    </div>
-
-    <!-- Step 1: Enter phone number -->
-    <div id="step1">
-      <input type="tel" id="phoneInput" placeholder="+1 234 567 8900" />
-      <div id="recaptcha-container"></div>
-      <button onclick="sendOTP()">Send OTP</button>
-    </div>
-
-    <!-- Step 2: Enter OTP code -->
-    <div id="step2" class="hidden">
-      <input type="number" id="otpInput" placeholder="Enter OTP code" />
-      <button onclick="verifyOTP()">Verify & Login</button>
-    </div>
-
-    <!-- Status message -->
-    <p id="message"></p>
+  <div class="bg-animation">
+    <div class="grid"></div>
+    <div class="glow glow1"></div>
+    <div class="glow glow2"></div>
   </div>
-
+  <div class="particles" id="particles"></div>
+  <div class="login-wrap">
+    <div class="login-card">
+      <div class="logo-wrap">
+        <div class="logo-ring">
+          <span class="logo-code">&lt;/&gt;</span>
+        </div>
+        <h1>DevChat</h1>
+        <p>The chat platform for developers</p>
+      </div>
+      <div id="step1" class="step">
+        <div class="field">
+          <label>Email address</label>
+          <div class="input-wrap">
+            <input type="email" id="emailInput" placeholder="you@example.com"/>
+            <span class="input-focus-bar"></span>
+          </div>
+        </div>
+        <button class="btn-primary" onclick="sendOTP()">
+          Send Login Link <span class="arrow">&#8594;</span>
+        </button>
+      </div>
+      <div id="step2" class="step hidden">
+        <div class="sent-wrap">
+          <div class="sent-icon">&#128236;</div>
+          <h3>Link sent!</h3>
+          <p>Check your inbox and click the magic link to sign in.</p>
+          <button class="btn-secondary" onclick="goBack()">&#8592; Try different email</button>
+        </div>
+      </div>
+      <p id="message"></p>
+      <div class="dots">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </div>
+  <script>
+    const container = document.getElementById('particles');
+    for (let i = 0; i < 30; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      p.style.cssText = `left:${Math.random()*100}%;animation-delay:${Math.random()*8}s;animation-duration:${6+Math.random()*6}s;width:${2+Math.random()*4}px;height:${2+Math.random()*4}px;`;
+      container.appendChild(p);
+    }
+  </script>
+  <script type="module" src="js/firebase.js"></script>
   <script type="module" src="js/auth.js"></script>
 </body>
 </html>
