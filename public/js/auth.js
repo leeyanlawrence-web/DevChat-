@@ -1,51 +1,59 @@
-import { auth } from "./firebase.js";
+import { auth, db } from "./firebase.js";
 import {
-  RecaptchaVerifier,
-  signInWithPhoneNumber
+  sendSignInLinkToEmail,
+  isSignInWithEmailLink,
+  signInWithEmailLink
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-let confirmationResult;
+const actionCodeSettings = {
+  url: window.location.origin,
+  handleCodeInApp: true
+};
 
-// Setup invisible recaptcha
-window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-  size: 'invisible'
+if (isSignInWithEmailLink(auth, window.location.href)) {
+  let email = localStorage.getItem("emailForSignIn");
+  if (!email) email = prompt("Enter your email to confirm:");
+  signInWithEmailLink(auth, email, window.location.href)
+    .then(async result => {
+      localStorage.removeItem("emailForSignIn");
+      await setDoc(doc(db, "users", result.user.uid), {
+        uid: result.user.uid,
+        email: result.user.email,
+        displayName: result.user.email.split("@")[0],
+        lastSeen: new Date()
+      }, { merge: true });
+      window.location.href = "/";
+    }).catch(err => console.error(err));
+}
+
+auth.onAuthStateChanged(user => {
+  const onLogin = window.location.pathname.includes("login");
+  if (user && onLogin) {
+    window.location.href = "/";
+  } else if (!user && !onLogin) {
+    window.location.href = "/login.html";
+  }
 });
 
-// Send OTP to phone number
 window.sendOTP = async function () {
-  const phone = document.getElementById('phoneInput').value;
-  const msg = document.getElementById('message');
-
+  const email = document.getElementById("emailInput").value.trim();
+  const msg = document.getElementById("message");
+  if (!email) { msg.textContent = "Please enter your email"; return; }
   try {
-    msg.textContent = 'Sending OTP...';
-    confirmationResult = await signInWithPhoneNumber(
-      auth, phone, window.recaptchaVerifier
-    );
-    msg.textContent = 'OTP sent! Check your phone.';
-
-    // Show OTP input
-    document.getElementById('step1').classList.add('hidden');
-    document.getElementById('step2').classList.remove('hidden');
-
+    msg.textContent = "Sending...";
+    await sendSignInLinkToEmail(auth, email, actionCodeSettings);
+    localStorage.setItem("emailForSignIn", email);
+    msg.textContent = "Login link sent! Check your email.";
+    document.getElementById("step1").classList.add("hidden");
+    document.getElementById("step2").classList.remove("hidden");
   } catch (err) {
-    msg.textContent = 'Error: ' + err.message;
+    msg.textContent = "Error: " + err.message;
   }
 };
 
-// Verify OTP code
-window.verifyOTP = async function () {
-  const otp = document.getElementById('otpInput').value;
-  const msg = document.getElementById('message');
-
-  try {
-    msg.textContent = 'Verifying...';
-    await confirmationResult.confirm(otp);
-    msg.textContent = 'Login successful!';
-
-    // Go to main app
-    window.location.href = '/';
-
-  } catch (err) {
-    msg.textContent = 'Wrong OTP. Try again.';
-  }
+window.goBack = function () {
+  document.getElementById("step1").classList.remove("hidden");
+  document.getElementById("step2").classList.add("hidden");
+  document.getElementById("message").textContent = "";
 };
