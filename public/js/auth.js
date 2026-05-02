@@ -11,6 +11,7 @@ const actionCodeSettings = {
   handleCodeInApp: true
 };
 
+// Handle email link
 if (isSignInWithEmailLink(auth, window.location.href)) {
   let email = localStorage.getItem("emailForSignIn");
   if (!email) email = prompt("Enter your email to confirm:");
@@ -27,7 +28,9 @@ if (isSignInWithEmailLink(auth, window.location.href)) {
     }).catch(err => console.error(err));
 }
 
+// Fix flash - check auth before showing page
 auth.onAuthStateChanged(user => {
+  document.body.style.visibility = "visible";
   const onLogin = window.location.pathname.includes("login");
   if (user && onLogin) {
     window.location.href = "/";
