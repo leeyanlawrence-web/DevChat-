@@ -1,0 +1,27 @@
+.msg-bubble a {
+  color: #58a6ff;
+  text-decoration: none;
+  display: block;
+  margin-top: 4px;
+}
+.msg-bubble a:hover { text-decoration: underline; }
+.msg-bubble img {
+  max-width: 200px;
+  border-radius: 8px;
+  margin-top: 6px;
+  display: block;
+}
+.msg-bubble pre {
+  background: rgba(0,0,0,0.3);
+  padding: 8px;
+  border-radius: 6px;
+  overflow-x: auto;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.8rem;
+  margin-top: 6px;
+}
+.status-item-time {
+  font-size: 0.72rem;
+  color: #8b949e;
+  margin-top: 2px;
+}
