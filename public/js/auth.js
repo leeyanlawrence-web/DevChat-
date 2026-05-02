@@ -1,21 +1,12 @@
 import { auth, db } from "./firebase.js";
 import {
-  sendSignInLinkToEmail,
-  isSignInWithEmailLink,
-  signInWithEmailLink,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
   GoogleAuthProvider,
   GithubAuthProvider,
   signInWithPopup
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-const actionCodeSettings = {
-  url: window.location.origin + "/login.html",
-  handleCodeInApp: true
-};
-
-let resendTimer = null;
-let lastEmail = "";
 
 // Save user to Firestore
 async function saveUser(user) {
@@ -28,36 +19,68 @@ async function saveUser(user) {
   }, { merge: true });
 }
 
-// Handle email link
-async function handleEmailLink() {
-  if (!isSignInWithEmailLink(auth, window.location.href)) return;
-  let email = localStorage.getItem("emailForSignIn");
-  if (!email) email = prompt("Enter your email to confirm login:");
-  if (!email) return;
-  try {
-    const result = await signInWithEmailLink(auth, email, window.location.href);
-    localStorage.removeItem("emailForSignIn");
-    await saveUser(result.user);
-    window.location.replace("/");
-  } catch (err) {
-    console.error(err);
-    const msg = document.getElementById("message");
-    if (msg) msg.textContent = "Login failed: " + err.message;
-  }
-}
-
-handleEmailLink();
-
 // Auth state
 auth.onAuthStateChanged(user => {
   document.body.style.visibility = "visible";
   const onLogin = window.location.pathname.includes("login");
-  if (user && onLogin && !isSignInWithEmailLink(auth, window.location.href)) {
+  if (user && onLogin) {
     window.location.replace("/");
   } else if (!user && !onLogin) {
     window.location.replace("/login.html");
   }
 });
+
+// Toggle between login and signup
+window.toggleMode = function () {
+  const isLogin = document.getElementById("loginMode").classList.contains("hidden");
+  document.getElementById("loginMode").classList.toggle("hidden");
+  document.getElementById("signupMode").classList.toggle("hidden");
+  document.getElementById("message").textContent = "";
+};
+
+// Email login
+window.loginWithEmail = async function () {
+  const email = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value;
+  const msg = document.getElementById("message");
+  if (!email || !password) { msg.textContent = "Please fill in all fields"; return; }
+  try {
+    msg.textContent = "Signing in...";
+    const result = await signInWithEmailAndPassword(auth, email, password);
+    await saveUser(result.user);
+    window.location.replace("/");
+  } catch (err) {
+    msg.textContent = "Error: " + err.message;
+  }
+};
+
+// Email signup
+window.signupWithEmail = async function () {
+  const email = document.getElementById("signupEmail").value.trim();
+  const password = document.getElementById("signupPassword").value;
+  const confirm = document.getElementById("confirmPassword").value;
+  const name = document.getElementById("signupName").value.trim();
+  const msg = document.getElementById("message");
+
+  if (!email || !password || !name) { msg.textContent = "Please fill in all fields"; return; }
+  if (password !== confirm) { msg.textContent = "Passwords don't match"; return; }
+  if (password.length < 6) { msg.textContent = "Password must be at least 6 characters"; return; }
+
+  try {
+    msg.textContent = "Creating account...";
+    const result = await createUserWithEmailAndPassword(auth, email, password);
+    await setDoc(doc(db, "users", result.user.uid), {
+      uid: result.user.uid,
+      email: result.user.email,
+      displayName: name,
+      photo: "",
+      lastSeen: new Date()
+    }, { merge: true });
+    window.location.replace("/");
+  } catch (err) {
+    msg.textContent = "Error: " + err.message;
+  }
+};
 
 // Google Sign In
 window.signInWithGoogle = async function () {
@@ -67,8 +90,7 @@ window.signInWithGoogle = async function () {
     await saveUser(result.user);
     window.location.replace("/");
   } catch (err) {
-    const msg = document.getElementById("message");
-    if (msg) msg.textContent = "Error: " + err.message;
+    document.getElementById("message").textContent = "Error: " + err.message;
   }
 };
 
@@ -80,65 +102,6 @@ window.signInWithGithub = async function () {
     await saveUser(result.user);
     window.location.replace("/");
   } catch (err) {
-    const msg = document.getElementById("message");
-    if (msg) msg.textContent = "Error: " + err.message;
+    document.getElementById("message").textContent = "Error: " + err.message;
   }
-};
-
-// Email link
-window.sendOTP = async function () {
-  const email = document.getElementById("emailInput").value.trim();
-  const msg = document.getElementById("message");
-  if (!email) { msg.textContent = "Please enter your email"; return; }
-  try {
-    msg.textContent = "Sending...";
-    await sendSignInLinkToEmail(auth, email, actionCodeSettings);
-    localStorage.setItem("emailForSignIn", email);
-    lastEmail = email;
-    msg.textContent = "Login link sent! Check your email.";
-    document.getElementById("step1").classList.add("hidden");
-    document.getElementById("step2").classList.remove("hidden");
-    startResendTimer();
-  } catch (err) {
-    msg.textContent = "Error: " + err.message;
-  }
-};
-
-function startResendTimer() {
-  const btn = document.getElementById("resendBtn");
-  const countdown = document.getElementById("resendCountdown");
-  if (!btn || !countdown) return;
-  btn.style.display = "none";
-  countdown.style.display = "block";
-  let seconds = 60;
-  resendTimer = setInterval(() => {
-    seconds--;
-    countdown.textContent = `Resend link in ${seconds}s`;
-    if (seconds <= 0) {
-      clearInterval(resendTimer);
-      countdown.style.display = "none";
-      btn.style.display = "block";
-    }
-  }, 1000);
-}
-
-window.resendOTP = async function () {
-  const msg = document.getElementById("message");
-  const btn = document.getElementById("resendBtn");
-  try {
-    btn.textContent = "Sending...";
-    await sendSignInLinkToEmail(auth, lastEmail, actionCodeSettings);
-    msg.textContent = "New link sent! Check your email.";
-    btn.textContent = "Resend link";
-    startResendTimer();
-  } catch (err) {
-    msg.textContent = "Error: " + err.message;
-  }
-};
-
-window.goBack = function () {
-  document.getElementById("step1").classList.remove("hidden");
-  document.getElementById("step2").classList.add("hidden");
-  document.getElementById("message").textContent = "";
-  if (resendTimer) clearInterval(resendTimer);
 };

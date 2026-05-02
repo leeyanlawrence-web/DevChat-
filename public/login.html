@@ -14,6 +14,7 @@
     <div class="glow glow2"></div>
   </div>
   <div class="particles" id="particles"></div>
+
   <div class="login-wrap">
     <div class="login-card">
       <div class="logo-wrap">
@@ -24,38 +25,92 @@
         <p>The chat platform for developers</p>
       </div>
 
-      <div id="step1" class="step">
+      <!-- Social buttons -->
+      <button class="btn-social google" onclick="signInWithGoogle()">
+        <svg width="18" height="18" viewBox="0 0 18 18">
+          <path fill="#4285F4" d="M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 0 0 2.38-5.88c0-.57-.05-.66-.15-1.18z"/>
+          <path fill="#34A853" d="M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2.04a4.8 4.8 0 0 1-7.18-2.54H1.83v2.07A8 8 0 0 0 8.98 17z"/>
+          <path fill="#FBBC05" d="M4.5 10.48A4.8 4.8 0 0 1 4.5 7.5V5.43H1.83a8 8 0 0 0 0 7.14z"/>
+          <path fill="#EA4335" d="M8.98 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58A8 8 0 0 0 1.83 5.43L4.5 7.5a4.77 4.77 0 0 1 4.48-3.92z"/>
+        </svg>
+        Continue with Google
+      </button>
+
+      <button class="btn-social github" onclick="signInWithGithub()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
+          <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
+        </svg>
+        Continue with GitHub
+      </button>
+
+      <div class="divider"><span>or continue with email</span></div>
+
+      <!-- Login form -->
+      <div id="loginMode" class="step">
         <div class="field">
-          <label>Email address</label>
+          <label>Email</label>
           <div class="input-wrap">
-            <input type="email" id="emailInput" placeholder="you@example.com"/>
+            <input type="email" id="loginEmail" placeholder="you@example.com"/>
             <span class="input-focus-bar"></span>
           </div>
         </div>
-        <button class="btn-primary" onclick="sendOTP()">
-          Send Login Link <span class="arrow">&#8594;</span>
-        </button>
-      </div>
-
-      <div id="step2" class="step hidden">
-        <div class="sent-wrap">
-          <div class="sent-icon">&#128236;</div>
-          <h3>Link sent!</h3>
-          <p>Check your inbox and click the magic link to sign in.</p>
-          <p id="resendCountdown" style="color:#8b949e;font-size:0.85rem;margin-top:12px;display:none;">Resend link in 60s</p>
-          <button id="resendBtn" class="btn-primary" onclick="resendOTP()" style="display:none;margin-top:12px;">
-            Resend Link &#8594;
-          </button>
-          <button class="btn-secondary" onclick="goBack()">&#8592; Try different email</button>
+        <div class="field">
+          <label>Password</label>
+          <div class="input-wrap">
+            <input type="password" id="loginPassword" placeholder="••••••••"/>
+            <span class="input-focus-bar"></span>
+          </div>
         </div>
+        <button class="btn-primary" onclick="loginWithEmail()">
+          Sign In <span class="arrow">&#8594;</span>
+        </button>
+        <p class="toggle-text">
+          No account? <span onclick="toggleMode()">Create one</span>
+        </p>
+      </div>  <!-- Signup form -->
+      <div id="signupMode" class="step hidden">
+        <div class="field">
+          <label>Display Name</label>
+          <div class="input-wrap">
+            <input type="text" id="signupName" placeholder="Your name"/>
+            <span class="input-focus-bar"></span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <div class="input-wrap">
+            <input type="email" id="signupEmail" placeholder="you@example.com"/>
+            <span class="input-focus-bar"></span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <div class="input-wrap">
+            <input type="password" id="signupPassword" placeholder="Min 6 characters"/>
+            <span class="input-focus-bar"></span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Confirm Password</label>
+          <div class="input-wrap">
+            <input type="password" id="confirmPassword" placeholder="Repeat password"/>
+            <span class="input-focus-bar"></span>
+          </div>
+        </div>
+        <button class="btn-primary" onclick="signupWithEmail()">
+          Create Account <span class="arrow">&#8594;</span>
+        </button>
+        <p class="toggle-text">
+          Have an account? <span onclick="toggleMode()">Sign in</span>
+        </p>
       </div>
-
-      <p id="message"></p>
+   <p id="message"></p>
       <div class="dots">
         <span></span><span></span><span></span>
       </div>
     </div>
   </div>
+
   <script>
     const container = document.getElementById('particles');
     for (let i = 0; i < 30; i++) {

@@ -111,3 +111,15 @@ body {
 .dots span:nth-child(3) { animation-delay: 0.4s; }
 @keyframes dotPulse { 0%, 100% { background: rgba(88,166,255,0.2); transform: scale(1); } 50% { background: #58a6ff; transform: scale(1.4); } }
 .hidden { display: none !important; }
+.toggle-text {
+  text-align: center;
+  color: #8b949e;
+  font-size: 0.85rem;
+  margin-top: 14px;
+}
+.toggle-text span {
+  color: #58a6ff;
+  cursor: pointer;
+  font-weight: 600;
+}
+.toggle-text span:hover { text-decoration: underline; }
