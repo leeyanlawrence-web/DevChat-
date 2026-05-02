@@ -2,7 +2,10 @@ import { auth, db } from "./firebase.js";
 import {
   sendSignInLinkToEmail,
   isSignInWithEmailLink,
-  signInWithEmailLink
+  signInWithEmailLink,
+  GoogleAuthProvider,
+  GithubAuthProvider,
+  signInWithPopup
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
@@ -14,36 +17,38 @@ const actionCodeSettings = {
 let resendTimer = null;
 let lastEmail = "";
 
-// Handle email link sign in
+// Save user to Firestore
+async function saveUser(user) {
+  await setDoc(doc(db, "users", user.uid), {
+    uid: user.uid,
+    email: user.email,
+    displayName: user.displayName || user.email?.split("@")[0] || "Developer",
+    photo: user.photoURL || "",
+    lastSeen: new Date()
+  }, { merge: true });
+}
+
+// Handle email link
 async function handleEmailLink() {
   if (!isSignInWithEmailLink(auth, window.location.href)) return;
-
   let email = localStorage.getItem("emailForSignIn");
-  if (!email) {
-    email = prompt("Please enter your email to confirm login:");
-  }
+  if (!email) email = prompt("Enter your email to confirm login:");
   if (!email) return;
-
   try {
     const result = await signInWithEmailLink(auth, email, window.location.href);
     localStorage.removeItem("emailForSignIn");
-
-    await setDoc(doc(db, "users", result.user.uid), {
-      uid: result.user.uid,
-      email: result.user.email,
-      displayName: result.user.email.split("@")[0],
-      lastSeen: new Date()
-    }, { merge: true });
-
+    await saveUser(result.user);
     window.location.replace("/");
   } catch (err) {
     console.error(err);
-    document.getElementById("message").textContent = "Login failed: " + err.message;
+    const msg = document.getElementById("message");
+    if (msg) msg.textContent = "Login failed: " + err.message;
   }
 }
 
 handleEmailLink();
 
+// Auth state
 auth.onAuthStateChanged(user => {
   document.body.style.visibility = "visible";
   const onLogin = window.location.pathname.includes("login");
@@ -54,6 +59,33 @@ auth.onAuthStateChanged(user => {
   }
 });
 
+// Google Sign In
+window.signInWithGoogle = async function () {
+  try {
+    const provider = new GoogleAuthProvider();
+    const result = await signInWithPopup(auth, provider);
+    await saveUser(result.user);
+    window.location.replace("/");
+  } catch (err) {
+    const msg = document.getElementById("message");
+    if (msg) msg.textContent = "Error: " + err.message;
+  }
+};
+
+// GitHub Sign In
+window.signInWithGithub = async function () {
+  try {
+    const provider = new GithubAuthProvider();
+    const result = await signInWithPopup(auth, provider);
+    await saveUser(result.user);
+    window.location.replace("/");
+  } catch (err) {
+    const msg = document.getElementById("message");
+    if (msg) msg.textContent = "Error: " + err.message;
+  }
+};
+
+// Email link
 window.sendOTP = async function () {
   const email = document.getElementById("emailInput").value.trim();
   const msg = document.getElementById("message");
