@@ -11,7 +11,9 @@ const actionCodeSettings = {
   handleCodeInApp: true
 };
 
-// Handle email link
+let resendTimer = null;
+let lastEmail = "";
+
 if (isSignInWithEmailLink(auth, window.location.href)) {
   let email = localStorage.getItem("emailForSignIn");
   if (!email) email = prompt("Enter your email to confirm:");
@@ -28,7 +30,6 @@ if (isSignInWithEmailLink(auth, window.location.href)) {
     }).catch(err => console.error(err));
 }
 
-// Fix flash - check auth before showing page
 auth.onAuthStateChanged(user => {
   document.body.style.visibility = "visible";
   const onLogin = window.location.pathname.includes("login");
@@ -47,9 +48,45 @@ window.sendOTP = async function () {
     msg.textContent = "Sending...";
     await sendSignInLinkToEmail(auth, email, actionCodeSettings);
     localStorage.setItem("emailForSignIn", email);
+    lastEmail = email;
     msg.textContent = "Login link sent! Check your email.";
     document.getElementById("step1").classList.add("hidden");
     document.getElementById("step2").classList.remove("hidden");
+    startResendTimer();
+  } catch (err) {
+    msg.textContent = "Error: " + err.message;
+  }
+};
+
+function startResendTimer() {
+  const btn = document.getElementById("resendBtn");
+  const countdown = document.getElementById("resendCountdown");
+  if (!btn || !countdown) return;
+
+  btn.style.display = "none";
+  countdown.style.display = "block";
+  let seconds = 60;
+
+  resendTimer = setInterval(() => {
+    seconds--;
+    countdown.textContent = `Resend link in ${seconds}s`;
+    if (seconds <= 0) {
+      clearInterval(resendTimer);
+      countdown.style.display = "none";
+      btn.style.display = "block";
+    }
+  }, 1000);
+}
+
+window.resendOTP = async function () {
+  const msg = document.getElementById("message");
+  const btn = document.getElementById("resendBtn");
+  try {
+    btn.textContent = "Sending...";
+    await sendSignInLinkToEmail(auth, lastEmail, actionCodeSettings);
+    msg.textContent = "New link sent! Check your email.";
+    btn.textContent = "Resend link";
+    startResendTimer();
   } catch (err) {
     msg.textContent = "Error: " + err.message;
   }
@@ -59,4 +96,5 @@ window.goBack = function () {
   document.getElementById("step1").classList.remove("hidden");
   document.getElementById("step2").classList.add("hidden");
   document.getElementById("message").textContent = "";
+  if (resendTimer) clearInterval(resendTimer);
 };

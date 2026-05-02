@@ -23,6 +23,7 @@
         <h1>DevChat</h1>
         <p>The chat platform for developers</p>
       </div>
+
       <div id="step1" class="step">
         <div class="field">
           <label>Email address</label>
@@ -35,14 +36,20 @@
           Send Login Link <span class="arrow">&#8594;</span>
         </button>
       </div>
+
       <div id="step2" class="step hidden">
         <div class="sent-wrap">
           <div class="sent-icon">&#128236;</div>
           <h3>Link sent!</h3>
           <p>Check your inbox and click the magic link to sign in.</p>
+          <p id="resendCountdown" style="color:#8b949e;font-size:0.85rem;margin-top:12px;display:none;">Resend link in 60s</p>
+          <button id="resendBtn" class="btn-primary" onclick="resendOTP()" style="display:none;margin-top:12px;">
+            Resend Link &#8594;
+          </button>
           <button class="btn-secondary" onclick="goBack()">&#8592; Try different email</button>
         </div>
       </div>
+
       <p id="message"></p>
       <div class="dots">
         <span></span><span></span><span></span>
