@@ -7,36 +7,50 @@ import {
 import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const actionCodeSettings = {
-  url: window.location.origin,
+  url: window.location.origin + "/login.html",
   handleCodeInApp: true
 };
 
 let resendTimer = null;
 let lastEmail = "";
 
-if (isSignInWithEmailLink(auth, window.location.href)) {
+// Handle email link sign in
+async function handleEmailLink() {
+  if (!isSignInWithEmailLink(auth, window.location.href)) return;
+
   let email = localStorage.getItem("emailForSignIn");
-  if (!email) email = prompt("Enter your email to confirm:");
-  signInWithEmailLink(auth, email, window.location.href)
-    .then(async result => {
-      localStorage.removeItem("emailForSignIn");
-      await setDoc(doc(db, "users", result.user.uid), {
-        uid: result.user.uid,
-        email: result.user.email,
-        displayName: result.user.email.split("@")[0],
-        lastSeen: new Date()
-      }, { merge: true });
-      window.location.href = "/";
-    }).catch(err => console.error(err));
+  if (!email) {
+    email = prompt("Please enter your email to confirm login:");
+  }
+  if (!email) return;
+
+  try {
+    const result = await signInWithEmailLink(auth, email, window.location.href);
+    localStorage.removeItem("emailForSignIn");
+
+    await setDoc(doc(db, "users", result.user.uid), {
+      uid: result.user.uid,
+      email: result.user.email,
+      displayName: result.user.email.split("@")[0],
+      lastSeen: new Date()
+    }, { merge: true });
+
+    window.location.replace("/");
+  } catch (err) {
+    console.error(err);
+    document.getElementById("message").textContent = "Login failed: " + err.message;
+  }
 }
+
+handleEmailLink();
 
 auth.onAuthStateChanged(user => {
   document.body.style.visibility = "visible";
   const onLogin = window.location.pathname.includes("login");
-  if (user && onLogin) {
-    window.location.href = "/";
+  if (user && onLogin && !isSignInWithEmailLink(auth, window.location.href)) {
+    window.location.replace("/");
   } else if (!user && !onLogin) {
-    window.location.href = "/login.html";
+    window.location.replace("/login.html");
   }
 });
 
@@ -62,11 +76,9 @@ function startResendTimer() {
   const btn = document.getElementById("resendBtn");
   const countdown = document.getElementById("resendCountdown");
   if (!btn || !countdown) return;
-
   btn.style.display = "none";
   countdown.style.display = "block";
   let seconds = 60;
-
   resendTimer = setInterval(() => {
     seconds--;
     countdown.textContent = `Resend link in ${seconds}s`;
