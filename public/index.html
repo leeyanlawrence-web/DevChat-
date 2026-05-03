@@ -7,81 +7,118 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/chat.css">
-  <style>
-    body { visibility: hidden; }
-  </style>
 </head>
 <body>
   <div class="topbar" id="topbar">
-    <button class="icon-btn" id="backBtn" onclick="goBack()" style="display:none">&#8592;</button>
-    <span class="topbar-title">&lt;DevChat/&gt;</span>
+    <button class="icon-btn" id="backBtn" onclick="closeChat()" style="display:none">&#8592;</button>
+    <span class="topbar-title" id="topbarTitle">&lt;DevChat/&gt;</span>
     <button class="icon-btn" onclick="toggleSidebar()">&#9776;</button>
   </div>
+
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
   <div class="app-body">
     <div class="sidebar" id="sidebar">
       <div class="sidebar-top">
         <div class="brand">&lt;DevChat/&gt;</div>
-        <button class="new-group-btn" onclick="createGroup()">+ Group</button>
+        <div class="top-actions">
+          <button class="icon-btn" onclick="showSettings()" title="Settings">&#9881;</button>
+          <button class="icon-btn logout-btn" onclick="logoutUser()" title="Logout">&#10006;</button>
+        </div>
       </div>
-      <div class="user-profile">
+
+      <div class="user-profile" id="userProfile">
         <div class="user-avatar" id="userAvatar">?</div>
         <div class="user-info">
           <span id="userName">Loading...</span>
           <span class="user-status">&#9679; Online</span>
         </div>
       </div>
+
       <div class="search-wrap">
-        <input type="text" id="searchInput" placeholder="Search..."/>
+        <span class="search-icon">&#128269;</span>
+        <input type="text" id="searchInput" placeholder="Search users..."/>
       </div>
+
       <div class="tabs">
         <button class="tab active" id="tab-chats" onclick="switchTab('chats')">Chats</button>
         <button class="tab" id="tab-groups" onclick="switchTab('groups')">Groups</button>
         <button class="tab" id="tab-status" onclick="switchTab('status')">Status</button>
       </div>
+
       <div class="tab-panels">
         <div id="panel-chats" class="panel active">
-          <div id="chatList" class="list"></div>
+          <div id="chatList"></div>
         </div>
         <div id="panel-groups" class="panel">
-          <div id="groupList" class="list"></div>
+          <button class="new-group-btn" onclick="createGroup()">&#43; New Group</button>
+          <div id="groupList"></div>
         </div>
         <div id="panel-status" class="panel">
-          <button class="post-status-btn" onclick="createStatus()">+ Post Status</button>
-          <div id="statusList" class="list"></div>
+          <button class="post-status-btn" onclick="createStatus()">&#43; Post Status</button>
+          <div id="statusList"></div>
         </div>
       </div>
     </div>
+
     <div class="chat-area" id="chatArea">
       <div class="empty-state" id="emptyState">
-        <div class="empty-animation">
-          <div class="empty-icon">💻</div>
-          <div class="empty-rings">
-            <div class="ring ring1"></div>
-            <div class="ring ring2"></div>
-            <div class="ring ring3"></div>
-          </div>
-        </div>
-        <h2>&lt;Select a chat/&gt;</h2>
-        <p>Pick a developer to start chatting</p>
+        <div class="empty-icon-wrap">💬</div>
+        <h2>No chat selected</h2>
+        <p>Search for a developer and start chatting</p>
       </div>
+
       <div id="activeChat" class="active-chat hidden">
         <div class="chat-topbar">
           <button class="icon-btn back-chat-btn" onclick="closeChat()">&#8592;</button>
-          <div class="chat-avatar" id="activeChatAvatar">?</div>
-          <div class="chat-user-info">
+          <div class="chat-topbar-avatar" id="activeChatAvatar">?</div>
+          <div class="chat-topbar-info">
             <div class="chat-user-name" id="chatName">Name</div>
-            <div class="chat-user-status online">&#9679; online</div>
+            <div class="chat-user-status online" id="chatStatus">&#9679; online</div>
+          </div>
+          <div class="chat-actions">
+            <button class="icon-btn" title="Search">&#128269;</button>
           </div>
         </div>
+
         <div class="messages-wrap" id="messages"></div>
+
         <div class="input-bar">
-          <button class="icon-btn attach" onclick="attachFile()">&#128206;</button>
-          <input type="text" id="msgInput" placeholder="Message..."/>
+          <button class="icon-btn attach-btn" onclick="attachFile()" title="Attach file">&#128206;</button>
+          <input type="text" id="msgInput" placeholder="Type a message..."/>
           <button class="send-btn" onclick="sendMessage()">&#10148;</button>
         </div>
       </div>
     </div>
   </div>
+
+  <div id="settingsPanel" class="settings-panel hidden">
+    <div class="settings-header">
+      <button class="icon-btn" onclick="hideSettings()">&#8592;</button>
+      <h2>Settings</h2>
+    </div>
+    <div class="settings-section">
+      <h4>Account</h4>
+      <div class="settings-item" onclick="logoutUser()">
+        <div class="settings-item-icon">&#10006;</div>
+        <div class="settings-item-info">
+          <span>Logout</span>
+          <small>Sign out of DevChat</small>
+        </div>
+      </div>
+    </div>
+    <div class="settings-section">
+      <h4>App</h4>
+      <div class="settings-item">
+        <div class="settings-item-icon">&#127760;</div>
+        <div class="settings-item-info">
+          <span>DevChat v1.0</span>
+          <small>Chat platform for developers</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script type="module" src="js/firebase.js"></script>
   <script type="module" src="js/auth.js"></script>
   <script type="module" src="js/chat.js"></script>
