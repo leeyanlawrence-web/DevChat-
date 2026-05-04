@@ -183,3 +183,27 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   .sb-nav{display:flex}
   .msg{max-width:88%}
 }
+
+/* STORIES ROW */
+.stories-row{display:flex;gap:12px;padding:12px 16px;overflow-x:auto;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0}
+.stories-row::-webkit-scrollbar{display:none}
+.story-item,.story-add{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;flex-shrink:0}
+.story-circle{width:52px;height:52px;border-radius:50%;border:3px solid #25d366;display:flex;align-items:center;justify-content:center;overflow:hidden;background:linear-gradient(135deg,#25d366,#128c7e);position:relative;transition:transform 0.2s}
+.story-circle:hover{transform:scale(1.05)}
+.story-circle.add-circle{background:var(--surface2);border-color:var(--border)}
+.story-circle.my-story{border-color:#0084ff}
+.story-item span,.story-add span{font-size:0.7rem;color:var(--text2);font-weight:500;max-width:56px;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* SIDEBAR ICON BTNS */
+.sb-icon-btn{background:rgba(255,255,255,0.15);border:none;color:white;cursor:pointer;padding:6px;border-radius:8px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;transition:background 0.2s}
+.sb-icon-btn:hover{background:rgba(255,255,255,0.25)}
+
+/* FIX ACTIVE CHAT HEIGHT */
+#activeChat{display:flex!important;flex-direction:column;height:100%;overflow:hidden}
+.messages{flex:1;overflow-y:auto;min-height:0}
+.msg-input{flex-shrink:0;background:var(--surface2);border-top:1px solid var(--border);padding:8px 12px;display:flex;align-items:center;gap:8px}
+
+/* ANIMATIONS */
+@keyframes scaleIn{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
+@keyframes slideDown{from{opacity:0;transform:translateX(-50%) translateY(-10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}

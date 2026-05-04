@@ -2,51 +2,68 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>DevChat</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/app.css">
 </head>
 <body style="visibility:hidden">
 
-<!-- MOBILE TOPBAR -->
+<!-- TOPBAR -->
 <div class="topbar" id="topbar">
-  <button class="tbar-btn" id="menuBtn" onclick="toggleSidebar()">☰</button>
+  <button class="tbar-btn" onclick="toggleSidebar()">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
   <span class="tbar-title" id="tbarTitle">DevChat</span>
   <div style="display:flex;gap:4px">
-    <button class="tbar-btn" onclick="focusSearch()">🔍</button>
-    <button class="tbar-btn" id="moreBtn" onclick="showMore()">⋮</button>
+    <button class="tbar-btn" onclick="focusSearch()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    </button>
+    <button class="tbar-btn" id="moreBtn" onclick="showMore()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg>
+    </button>
   </div>
 </div>
 
-<!-- OVERLAY -->
 <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
 
 <div class="layout">
 
-  <!-- LEFT SIDEBAR -->
+  <!-- SIDEBAR -->
   <div class="sidebar" id="sidebar">
 
-    <!-- Header -->
     <div class="sb-header">
       <div class="sb-logo">DevChat</div>
       <div style="display:flex;gap:6px">
-        <button class="sb-btn" onclick="showNewChatModal()" title="New chat">✏️</button>
-        <button class="sb-btn" onclick="openSettings()" title="Settings">⚙️</button>
+        <button class="sb-icon-btn" onclick="showNewChatModal()" title="New chat">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+        </button>
+        <button class="sb-icon-btn" onclick="openSettings()" title="Settings">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+        </button>
       </div>
     </div>
+
+    <!-- Stories row -->
+    <div class="stories-row" id="storiesWrap"></div>
 
     <!-- Me -->
     <div class="me-bar" onclick="openProfile()">
       <div class="avatar" id="meAvatar">?</div>
       <div class="me-info">
         <div class="me-name" id="meName">Loading...</div>
-        <div class="me-status">🟢 Online</div>
+        <div class="me-status">
+          <svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="4" fill="#25d366"/></svg>
+          Online
+        </div>
       </div>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
     </div>
 
     <!-- Search -->
     <div class="search-bar">
-      <input id="searchInput" type="text" placeholder="🔍 Search people..." oninput="filterUsers(this.value)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2" style="position:absolute;left:22px;top:50%;transform:translateY(-50%);pointer-events:none"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input id="searchInput" type="text" placeholder="Search people..." oninput="filterUsers(this.value)" style="padding-left:36px">
     </div>
 
     <!-- Filter tabs -->
@@ -54,15 +71,18 @@
       <button class="ftab active" onclick="filterTab(this,'all')">All</button>
       <button class="ftab" onclick="filterTab(this,'online')">Online</button>
       <button class="ftab" onclick="filterTab(this,'groups')">Groups</button>
-      <button class="ftab" onclick="filterTab(this,'status')">Status</button>
+      <button class="ftab" onclick="filterTab(this,'stories')">Stories</button>
     </div>
 
     <!-- Lists -->
-    <div class="list-wrap" id="listWrap">
+    <div class="list-wrap">
       <div id="userList"></div>
       <div id="groupList" class="hidden"></div>
       <div id="statusList" class="hidden">
-        <button class="add-status-btn" onclick="addStatus()">+ Add Status</button>
+        <button class="add-status-btn" onclick="addStory()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+          Add Story
+        </button>
         <div id="statusItems"></div>
       </div>
     </div>
@@ -70,68 +90,84 @@
     <!-- Bottom nav -->
     <div class="sb-nav">
       <button class="nav-btn active" id="nav-chats" onclick="navTab('chats',this)">
-        <span>💬</span><label>Chats</label>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        <label>Chats</label>
       </button>
       <button class="nav-btn" id="nav-groups" onclick="navTab('groups',this)">
-        <span>👥</span><label>Groups</label>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+        <label>Groups</label>
       </button>
-      <button class="nav-btn" id="nav-status" onclick="navTab('status',this)">
-        <span>📢</span><label>Status</label>
+      <button class="nav-btn" id="nav-stories" onclick="navTab('stories',this)">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
+        <label>Stories</label>
       </button>
       <button class="nav-btn" id="nav-settings" onclick="openSettings()">
-        <span>⚙️</span><label>Settings</label>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+        <label>Settings</label>
       </button>
     </div>
   </div>
 
   <!-- CHAT PANEL -->
-  <div class="chat-panel" id="chatPanel">
+  <div class="chat-panel">
 
-    <!-- Empty -->
     <div class="no-chat" id="noChat">
-      <div class="no-chat-icon">💬</div>
-      <h2>DevChat</h2>
-      <p>Search for developers and start chatting</p>
+      <div class="no-chat-icon">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#25d366" stroke-width="1.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      </div>
+      <h2>Welcome to DevChat</h2>
+      <p>Connect with developers worldwide. Search for someone to start chatting!</p>
       <button class="green-btn" onclick="focusSearch();toggleSidebar()">Find Developers</button>
     </div>
 
-    <!-- Active chat -->
-    <div id="activeChat" class="hidden">
+    <div id="activeChat" class="hidden" style="display:flex;flex-direction:column;height:100%">
 
-      <!-- Chat header -->
       <div class="chat-header">
-        <button class="ch-back" onclick="backToList()">←</button>
+        <button class="ch-btn ch-back" onclick="backToList()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        </button>
         <div class="ch-avatar" id="chAvatar">?</div>
-        <div class="ch-info">
+        <div class="ch-info" style="cursor:pointer">
           <div class="ch-name" id="chName">Name</div>
           <div class="ch-status" id="chStatus">online</div>
         </div>
-        <div style="display:flex;gap:6px">
-          <button class="ch-btn" title="Video call">📹</button>
-          <button class="ch-btn" title="Voice call">📞</button>
-          <button class="ch-btn" onclick="chatMore()">⋮</button>
+        <div style="display:flex;gap:4px;margin-left:auto">
+          <button class="ch-btn" onclick="startCall('voice')" title="Voice call">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.67A2 2 0 012 .84h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+          </button>
+          <button class="ch-btn" onclick="startCall('video')" title="Video call">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+          </button>
+          <button class="ch-btn" id="chatMoreBtn" onclick="chatMore()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg>
+          </button>
         </div>
       </div>
 
-      <!-- Messages -->
       <div class="messages" id="messages"></div>
 
-      <!-- Input -->
       <div class="msg-input">
-        <button class="mi-btn" onclick="attachFile()">📎</button>
-        <input id="msgInput" type="text" placeholder="Type a message">
-        <button class="mi-btn" onclick="pickEmoji()">😊</button>
-        <button class="send-btn" onclick="sendMsg()">➤</button>
+        <button class="mi-btn" onclick="attachFile()" title="Attach file">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>
+        </button>
+        <input id="msgInput" type="text" placeholder="Type a message...">
+        <button class="mi-btn" onclick="pickEmoji()" title="Emoji">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 13s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+        </button>
+        <button class="send-btn" onclick="sendMsg()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
       </div>
     </div>
   </div>
-
 </div>
 
 <!-- SETTINGS PANEL -->
 <div class="full-panel hidden" id="settingsPanel">
   <div class="fp-header">
-    <button class="fp-back" onclick="closeSettings()">←</button>
+    <button class="fp-back" onclick="closeSettings()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    </button>
     <h2>Settings</h2>
   </div>
   <div class="fp-body">
@@ -141,38 +177,61 @@
         <div class="pc-name" id="pcName"></div>
         <div class="pc-email" id="pcEmail"></div>
       </div>
-      <button class="edit-btn" onclick="editName()">✏️</button>
+      <button class="edit-btn" onclick="editName()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      </button>
     </div>
     <div class="settings-list">
       <div class="s-section">Appearance</div>
       <div class="s-item" onclick="toggleTheme()">
-        <span class="s-icon">🌙</span>
-        <div class="s-text"><b>Dark Mode</b><small>Switch theme</small></div>
+        <span class="s-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+        </span>
+        <div class="s-text"><b>Dark Mode</b><small>Switch between light and dark theme</small></div>
         <div id="themeToggle" class="toggle-pill"></div>
       </div>
       <div class="s-section">Notifications</div>
-      <div class="s-item">
-        <span class="s-icon">🔔</span>
-        <div class="s-text"><b>Notifications</b><small>Message alerts</small></div>
+      <div class="s-item" onclick="customAlert('Notification settings coming soon!','info')">
+        <span class="s-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
+        </span>
+        <div class="s-text"><b>Notifications</b><small>Message and call alerts</small></div>
         <div class="toggle-pill on"></div>
       </div>
       <div class="s-section">Account</div>
       <div class="s-item" onclick="editName()">
-        <span class="s-icon">✏️</span>
-        <div class="s-text"><b>Edit Name</b><small>Change display name</small></div>
+        <span class="s-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </span>
+        <div class="s-text"><b>Edit Display Name</b><small>Change how others see you</small></div>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
       </div>
       <div class="s-item" onclick="editBio()">
-        <span class="s-icon">📝</span>
-        <div class="s-text"><b>Edit Bio</b><small>About me</small></div>
+        <span class="s-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        </span>
+        <div class="s-text"><b>Edit Bio</b><small>Tell others about yourself</small></div>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+      </div>
+      <div class="s-item" onclick="customAlert('Privacy settings coming soon!','info')">
+        <span class="s-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        </span>
+        <div class="s-text"><b>Privacy</b><small>Control who can see you</small></div>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
       </div>
       <div class="s-item danger" onclick="doLogout()">
-        <span class="s-icon">🚪</span>
-        <div class="s-text"><b>Logout</b><small>Sign out</small></div>
+        <span class="s-icon" style="background:#fef2f2">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+        </span>
+        <div class="s-text"><b>Logout</b><small>Sign out of DevChat</small></div>
       </div>
       <div class="s-section">About</div>
       <div class="s-item">
-        <span class="s-icon">💬</span>
-        <div class="s-text"><b>DevChat v1.0</b><small>Made for developers</small></div>
+        <span class="s-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        </span>
+        <div class="s-text"><b>DevChat v1.0</b><small>Made for developers worldwide</small></div>
       </div>
     </div>
   </div>
@@ -183,9 +242,14 @@
   <div class="modal">
     <div class="modal-head">
       <b>New Chat</b>
-      <button onclick="closeModal('newChatModal')">✕</button>
+      <button onclick="closeModal('newChatModal')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
     </div>
-    <input type="text" placeholder="Search users..." id="modalSearch" oninput="modalFilter(this.value)" class="modal-search">
+    <div style="position:relative">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2" style="position:absolute;left:16px;top:50%;transform:translateY(-50%)"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" placeholder="Search users..." id="modalSearch" oninput="modalFilter(this.value)" class="modal-search" style="padding-left:40px">
+    </div>
     <div id="modalUserList" class="modal-list"></div>
   </div>
 </div>
@@ -195,14 +259,17 @@
   <div class="modal">
     <div class="modal-head">
       <b>Create Group</b>
-      <button onclick="closeModal('groupModal')">✕</button>
+      <button onclick="closeModal('groupModal')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
     </div>
-    <input type="text" id="groupName" placeholder="Group name..." class="modal-input">
-    <button class="green-btn" style="width:100%;margin-top:12px" onclick="createGroup()">Create Group</button>
+    <div style="padding:16px">
+      <input type="text" id="groupName" placeholder="Group name..." class="modal-input" style="margin-bottom:12px">
+      <button class="green-btn" style="width:100%" onclick="createGroup()">Create Group</button>
+    </div>
   </div>
 </div>
 
-<link rel="stylesheet" href="css/app.css">
 <script type="module" src="js/firebase.js"></script>
 <script type="module" src="js/app.js"></script>
 </body>
